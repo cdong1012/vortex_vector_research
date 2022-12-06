@@ -1,0 +1,2 @@
+main.o: main.cpp /home/osboxes/Desktop/vortex/driver/include/vortex.h \
+ ../../../hw/VX_config.h common.h
