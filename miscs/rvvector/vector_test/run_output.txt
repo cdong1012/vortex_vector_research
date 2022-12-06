@@ -4880,7 +4880,6 @@ TRACE       1891: pipeline-execute: op=BRANCH, coreid=0, wid=0, PC=800000c0, wb=
 DEBUG Fetch: coreid=0, wid=0, tmask=0001, PC=0x800000e8 (#389)
 DEBUG Instr 0x10572d7: VSET: v5 <- v10, imm=0x10
 DEBUG Src Reg [0]: DEBUG Reg type vector process
-DEBUG FUCKKKKKKKKKKKKKKKKKK
 DEBUG lmul:1 sew:8 ediv: 2rsrc_0VLMAX16
 TRACE       1891: pipeline-schedule: coreid=0, wid=0, PC=800000e8, wb=0, ex=NOP (#389)
 TRACE       1892: pipeline-commit: coreid=0, wid=0, PC=800000c0, wb=1, rd=x1, ex=ALU (#388)
@@ -4889,3 +4888,8 @@ TRACE       1893: icache-mem-rsp: tag=0, core_id=0 (#389)
 TRACE       1895: icache-rsp: addr=800000e8, tag=0, coreid=0, wid=0, PC=800000e8, wb=0, ex=NOP (#389)
 TRACE       1896: pipeline-decode: coreid=0, wid=0, PC=800000e8, wb=0, ex=NOP (#389)
 DEBUG Fetch: coreid=0, wid=0, tmask=0001, PC=0x800000ec (#390)
+DEBUG load vec: dest reg 0
+DEBUG load vec: source reg 11
+DEBUG Instr 0x205e007: VL: v0 <- M[r11 + 0x10]
+DEBUG Src Reg [0]: DEBUG Reg type vector process
+DEBUG Src Reg [1]: DEBUG Reg type vector process

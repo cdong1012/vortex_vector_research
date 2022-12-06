@@ -222,7 +222,8 @@ static const char* op_string(const Instr &instr) {
   case Opcode::FENCE: return "FENCE";
   case Opcode::FL: 
     switch (func3) {
-      case 0x1: return "VL";
+      case 0x0: return "VL";
+      // case 0x1: return "VL";
       case 0x2: return "FLW";
       case 0x3: return "FLD";
       default: 
@@ -380,7 +381,6 @@ std::ostream &operator<<(std::ostream &os, const Instr &instr) {
   auto func3  = instr.getFunc3();
 
   os << op_string(instr) << ": ";
-
   if (opcode == S_INST 
    || opcode == FS) {     
      os << "M[r" << std::dec << instr.getRSrc(0) << " + 0x" << std::hex << instr.getImm() << "] <- ";
@@ -603,6 +603,8 @@ std::shared_ptr<Instr> Decoder::decode(uint32_t code) const {
     } break;
 
     case Opcode::FL:
+      DP(3, "load vec: dest reg " << rd);
+      // DP(3, "load vec: source reg " << rs1);
       instr->setDestVReg(rd);
       instr->setSrcVReg(rs1);
       instr->setVlsWidth(func3);
