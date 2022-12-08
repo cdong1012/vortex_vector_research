@@ -1,0 +1,6 @@
+
+Execute.cpp: rd_write line 2316, when writing back to destination register, the vector write is not implemented, so the test fall through. Need to add the case + implement the register writeback
+
+Decode.cpp: simx already implements vector load and store in the fl and sl instruction (line 605-ish in decode.cpp and line 687 in execute.cpp) with the instruction fields being parsed already
+
+Execute.cpp: num_rsrcs process line 129, vector type is not supported. Needed to add case and parse it

@@ -604,7 +604,7 @@ std::shared_ptr<Instr> Decoder::decode(uint32_t code) const {
 
     case Opcode::FL:
       DP(3, "load vec: dest reg " << rd);
-      // DP(3, "load vec: source reg " << rs1);
+      DP(3, "load vec: func3/width reg " << func3);
       instr->setDestVReg(rd);
       instr->setSrcVReg(rs1);
       instr->setVlsWidth(func3);

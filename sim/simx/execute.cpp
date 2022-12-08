@@ -159,7 +159,7 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
         DPN(2, "}" << std::endl);
         break;
       case RegType::Vector:
-        DP(3, "Reg type vector process");
+        DP(3, "Reg type vector process " << num_rsrcs);
         break;
       default: 
         std::abort();
@@ -170,6 +170,7 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
 
   bool rd_write = false;
   
+  DP(3, "Opcode is " << opcode);
   switch (opcode) {
   case NOP:
     break;
@@ -680,6 +681,7 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
   }
   case L_INST:
   case FL: {
+    DP(3, "FL OPCODEEEE");
     trace->exe_type = ExeType::LSU;    
     trace->lsu.type = LsuType::LOAD;
     trace->used_iregs.set(rsrc0);
@@ -726,6 +728,8 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
       }
     } else {
       auto &vd = vreg_file_.at(rdest);
+      DP(3, "VECTOR LOAD STUFF HERE " << instr.getVlsWidth() << " " << vl_ << " " << *(vd.data()));
+
       switch (instr.getVlsWidth()) {
       case 6: {
         for (uint32_t i = 0; i < vl_; i++) {
@@ -2307,6 +2311,7 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
   }
 
   if (rd_write) {
+    DP(3, "FUCKKKKKKKKK RD WRITE");
     trace->wb = true;
     DPH(2, "Dest Reg: ");
     auto type = instr.getRDType();    
@@ -2340,6 +2345,9 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
       }
       DPN(2, "}" << std::endl);
       trace->used_fregs[rdest] = 1;
+      break;
+    case RegType::Vector:
+      DP(3, "FUCK WRITE VECTOR");
       break;
     default:
       std::abort();
