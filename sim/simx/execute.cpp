@@ -18,7 +18,7 @@ using namespace vortex;
 union reg_data_t {
   Word     i;  
   FWord    f;
-  uint64_t _;
+  uint64_t v;
 };
 
 static bool HasDivergentThreads(const ThreadMask &thread_mask,                                
@@ -159,7 +159,17 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
         DPN(2, "}" << std::endl);
         break;
       case RegType::Vector:
-        DP(3, "Reg type vector process " << num_rsrcs);
+        DPN(2, type << std::dec << reg << "={");
+        for (uint32_t t = 0; t < num_threads; ++t) {
+          if (t) DPN(2, ", ");
+          if (!tmask_.test(t)) {
+            DPN(2, "-");
+            continue;            
+          }
+          rsdata[t][i].v = vreg_file_.at(t)[reg];          
+          DPN(2, std::hex << rsdata[t][i].v); 
+        }
+        DPN(2, "}" << std::endl);
         break;
       default: 
         std::abort();
@@ -170,7 +180,6 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
 
   bool rd_write = false;
   
-  DP(3, "Opcode is " << opcode);
   switch (opcode) {
   case NOP:
     break;
@@ -681,7 +690,6 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
   }
   case L_INST:
   case FL: {
-    DP(3, "FL OPCODEEEE");
     trace->exe_type = ExeType::LSU;    
     trace->lsu.type = LsuType::LOAD;
     trace->used_iregs.set(rsrc0);
@@ -720,7 +728,7 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
         case 4: // RV32I: LBU
         case 5: // RV32I: LHU
         case 6: // RV64I: LWU
-          rddata[t]._ = mem_data;
+          rddata[t].v = mem_data;
           break;
         default:
           std::abort();      
@@ -728,7 +736,7 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
       }
     } else {
       auto &vd = vreg_file_.at(rdest);
-      DP(3, "VECTOR LOAD STUFF HERE " << instr.getVlsWidth() << " " << vl_ << " " << *(vd.data()));
+      DP(3, "VECTOR LOAD " << instr.getVlsWidth() << " " << vl_ << " ");
 
       switch (instr.getVlsWidth()) {
       case 6: {
@@ -764,7 +772,7 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
         if (!tmask_.test(t))
           continue;
         uint64_t mem_addr = rsdata[t][0].i + immsrc;
-        uint64_t mem_data = rsdata[t][1]._;
+        uint64_t mem_data = rsdata[t][1].v;
         if (mem_bytes < 8) {
           mem_data &= mask;
         }
@@ -2311,7 +2319,6 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
   }
 
   if (rd_write) {
-    DP(3, "FUCKKKKKKKKK RD WRITE");
     trace->wb = true;
     DPH(2, "Dest Reg: ");
     auto type = instr.getRDType();    
@@ -2347,7 +2354,18 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
       trace->used_fregs[rdest] = 1;
       break;
     case RegType::Vector:
-      DP(3, "FUCK WRITE VECTOR");
+      DPN(2, type << std::dec << rdest << "={");
+      for (uint32_t t = 0; t < num_threads; ++t) {
+        if (t) DPN(2, ", ");
+        if (!tmask_.test(t)) {
+          DPN(2, "-");
+          continue;            
+        }
+        freg_file_.at(t)[rdest] = rddata[t].v;        
+        DPN(2, "0x" << std::hex << rddata[t].v);         
+      }
+      DPN(2, "}" << std::endl);
+      trace->used_fregs[rdest] = 1;
       break;
     default:
       std::abort();

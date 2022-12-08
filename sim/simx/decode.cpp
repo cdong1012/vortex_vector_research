@@ -223,7 +223,7 @@ static const char* op_string(const Instr &instr) {
   case Opcode::FL: 
     switch (func3) {
       case 0x0: return "VL";
-      // case 0x1: return "VL";
+      case 0x1: return "VL";
       case 0x2: return "FLW";
       case 0x3: return "FLD";
       default: 

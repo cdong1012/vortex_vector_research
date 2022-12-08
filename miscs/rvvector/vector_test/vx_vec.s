@@ -8,11 +8,12 @@ vx_vec_test:
 # a0 = n, a1 = x, a2 = y, a3 = z
 # Non-vector instructions are indented
     vsetvli t0, a0, e32 # Set vector length based on 32-bit vectors
+
  loop:
     vle32.v v0, (a1)       # Get first vector
 #    vlw.v v0, (a1)           
       sub a0, a0, t0         # Decrement number done
-      slli t0, t0, 2         # Multiply number done by 4 bytes
+      slli t0, t0, 2         # Multiply number done by 4 bytes, too lazy to implment
       add a1, a1, t0         # Bump pointer
       vle32.v v1, (a2)    # Get second vector
     # vlw.v v1, (a2)           # Get second vector
